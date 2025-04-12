@@ -1,0 +1,65 @@
+    // 표준 실행 
+    //c의 int main과 같은류
+    //차이점 : c는 인자를 받지않아도 실행가능 / java는 인자를 받지 않으면 사용 불가
+
+public class Hello {
+    public static void main(String[] args) {
+   
+        // 변수생성은 c와 같음
+        int num1 = 4;
+    
+        // 출력 또한 c와 같음
+        // System.out.println(); 을 sout이라는 단축키로 빠르게 타이핑 가능
+        // print 와 println 둘다 존재함 각각 플래쉬의 유무차이
+        System.out.println(num1);
+
+        //if문(c와 같음)
+        if(num1 > 0)
+        {
+            System.out.println("0보다 큽니다");
+        }
+        else if (num1 == 4)
+        {
+            System.out.println("4입니다");
+        }
+        
+
+        //switch문 또한 c와 같지만 java 14부터 지원하는 새로운 문법이있음
+        
+        //기존 switch문
+        int grade = 1;
+        int reward = 0;    
+        switch (grade) 
+        {
+            case 1:
+                reward = 50000;
+                break;
+        
+            case 2:
+                reward = 30000;
+                break;
+
+            case 3:
+                reward = 10000;
+                break;
+
+            default:
+                reward = 0;
+                break;
+        }
+        System.out.println(reward);
+
+        //java 14이후부터 지원하는 문법
+        //조금 더 읽기 쉽다
+        int reward1 = switch (grade) 
+        {
+            case 1 -> 50000;
+            case 2 -> 50000;
+            case 3 -> 50000;
+            default -> 0;
+        }
+
+
+
+    }
+}
