@@ -1,0 +1,68 @@
+package hello;
+
+public class hello
+{
+    public static void main(String[] args)
+     { 
+
+        //for문과 while문 또한 c의 문법과 정확히 일치한다 이에 skip
+        for(int i = 1; i<=5; i++)
+        {
+            for(int j = 1; j<=i; j++)
+            {
+                System.out.print("*");
+            }
+            System.out.println();
+        }
+
+
+
+
+        //CS 지식
+        //형변환에는 명시적 형변환과 자동 형변환 2가지가 존재
+        
+        //자동 형변환 예시
+        //작은 범위 숫자타입에서 큰 범위 숫자타입으로는 java에서 자동으로 형변환을 해준다
+        int integerValue = 20000;
+        double doubleValue;
+        doubleValue = integerValue;
+
+        //동작 방식
+        doubleValue = integerValue;//라는 코드가 있다면
+        doubleValue = (double)integerValue;//형맞추기
+        doubleValue = (double) 10;//변수 값 읽기
+        doubleValue = 10.0;//형변환
+
+        //명시적 형변환 
+        integerValue = 0;
+        doubleValue = 1.5;
+        //integerValue = doubleValue; 컴파일 오류
+
+        integerValue = (int)doubleValue;
+        //이런 식으로형변환을 시도하면 double은 실수타입이고 int는 정수 타입이므로 소수점 뒤에있는 .5가 사라진다 
+
+        //동작 방식
+        integerValue = (int)doubleValue;
+        integerValue = (int)1.5;  //변수 값 읽기
+        integerValue = 1;         //int형으로형변환 하며 1을 저장
+
+        
+
+
+        //Overflow
+        //형 변환 과정 중에서 데이터의 의도하지 않은 손실 및 변화
+
+        //예시
+        long maxIntValue = 2147483647;  //int의 최고값
+        long maxIntValueOver = 2147483648; // int 최고값 +1
+
+        integerValue = (int) maxIntValue; // 문제 없음
+        //integerValue = (int) maxIntValueOver
+        //결과값 = -2147483648 
+        //int 형이 가질 수 있는 최고값을 초과했기에 최저값으로 한바퀴가 돌아간 것 overflow 발생 
+
+
+    }
+
+
+}
