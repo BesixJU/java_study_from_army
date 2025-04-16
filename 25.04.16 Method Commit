@@ -1,0 +1,84 @@
+import java.util.Scanner;
+//java에서 지원하는 클래스에서 Scanner란 클래스를 참조한다
+
+public class Main 
+{
+     public static void main(String[] args)
+     {
+          int a = 10;
+          int b = 20;
+
+          int total = add(a,b);
+     }
+
+
+     public static int add(int a, int b)
+     {
+          int sum = a+b;
+          return sum;
+     }
+}
+/*
+ * method 와 function의 차이 
+ * 기능적으로는 함수와 메서드는 동일하다
+ * 하지만 함수는 클래스의 종속되지 않은 독립적(아무 곳에서나 호출 가능) 
+ * 메서드는 클래스 or 객체에 속하는 함수(객체를 통해 호출된다,객체를 생성한 후 객체를 통해 함수를 사용가능)
+ * 굉장히 충격적인 사실을 알아냈다 java에서는 pass by reference를 지원 안한단다.. 
+ * 심지어 string도 불변객체로 작용한다 자바에서는 새로운 값으로 반환하는거 말고는 밖의 변수를 바꿀수 없다
+ * 
+ * 
+ * 메서드를 알아봤으니 조금 더 조사를 해봤다
+ * 메서드 앞에있는 pubilc은 역시 c에서 배운대로 클래스의 접근제어와 같다
+ * pubilc은 다른클래스 O / private는 다른 클래스 X / protected는 자식 클래스 or 같은 클래스에서만 사용 가능
+ * C와 똑같다. 
+ * 
+ * 조금 진도를 스킵하긴 했는데 접근제어 하면 당연히 상속과 다형성, 캡슐화가 궁금해져서 선행을 좀 했다
+ * 나중에 다시 다형성에 대해서 공부도 하고 예제도 만들어가면서 해볼건데 일단 지금 공부한거로는
+ * 
+ * 다음은 예제이다
+ * 
+ * // 부모 클래스 (슈퍼클래스)
+class Animal {
+    String name;
+
+    // 부모 클래스의 생성자
+    public Animal(String name) {
+        this.name = name;
+    }
+
+    // 부모 클래스의 메서드
+    public void makeSound() {
+        System.out.println("동물이 소리를 납니다.");
+    }
+}
+
+// 자식 클래스 (서브클래스)
+class Dog extends Animal {
+    // 자식 클래스의 생성자
+    public Dog(String name) {
+        super(name);  // 부모 클래스의 생성자 호출
+    }
+
+    // 부모 클래스의 makeSound() 메서드를 오버라이딩
+    @Override
+    public void makeSound() {
+        System.out.println(name + "가 멍멍 소리를 냅니다.");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        // Dog 객체 생성
+        Dog dog = new Dog("펭귄");
+
+        // 오버라이딩된 메서드 호출
+        dog.makeSound();  // "펭귄가 멍멍 소리를 냅니다." 출력
+    }
+}
+     대부분 C와 비슷하다 오버라이딩, 상속, 부모클래스와 자식클래스의 관계, 
+     다형성으로 인한 부모클래스의 메서드 호출가능 등등
+
+     대신 C에도 있는지 모르겠는데 super 라는 키워드가 존재한다
+     예제에는 보이지 않는데 **super 키워드를 앞에 붙이면 부모클래스의 메서드를 먼저 호출하게 된다!**
+ *
+ */
