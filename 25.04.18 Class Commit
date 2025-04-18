@@ -1,0 +1,66 @@
+기본적인 java의 클래스 사용법과 c++과 차이점으로 비교 추가로 상속은 아직 안해봄
+
+
+
+class Student {
+    String name;           // 인스턴스 변수 (C++에서의 멤버변수)
+    static int studentCount = 0; // static 변수 ( 클래스 레벨에서 공유하는 변수)
+
+  // C++과 같이 OOP이기 때문에 private로 접근제어를 해주는 캡슐화 해주는게 좋다!
+
+    
+    Student(String name) { // 생성자
+        this.name = name;
+        studentCount++; // 학생이 새로 만들어질 때마다 증가
+    }
+
+    void printInfo() { // 메서드
+        System.out.println("이름: " + name);
+        System.out.println("전체 학생 수: " + studentCount);
+    }
+}
+
+public class main2 {
+    public static void main(String[] args) {
+        Student s1 = new Student("철수"); // C++과 다르게 java는 자동으로 GC해주기 때문에 delete 하는 메모리 관리가 필요 없음 (이건 진짜좋은듯)
+        Student s2 = new Student("영희");
+
+        s1.printInfo();
+        s2.printInfo();
+    }
+}
+/*
+ * 클래스에 대한 c++ 과 java의 차이점 정리
+ * 메모리 관리에 대해 조금 더 편리함 c++은 new 와 delete를 사용했지만 new만 사용한다 하지만 연산자 오버로딩 불가 friend 접근제어자 없음
+ * 딱히 가상함수가 존재하지 않고 모든 메서드가 가상함수처럼 동작(즉 모든 메서드가 overridng 가능하다)
+ * C++에서는 멤버변수와 멤버 함수가 존재했지만 자바는 딱히 그런 말보다는 멤버 변수를 다 합쳐서 하는 말이 field 하나의 멤버 변수를 인스턴스 변수 멤버 함수를 메서드라고 한다
+ * 또한 자바의 클래스에서 static변수도 나오는데 이거는 c++의 전역변수같은 역할을 한다 하지만 파일에서 공유되는 c++과 다르게 class레벨에서만 공유가능하다
+ * 
+
+ * 
+ * 인스턴스 변수 = 멤버 변수 
+ * static 변수 = 전역변수 (java는 전역변수가 존재하지 않기 때문에)
+ * 
+ * 
+ * 
+ * this가 자꾸 헷갈려서 한번 더 정리하자
+ * this는 이 클래스의 객체의 인스턴스 를 가르키는 말이다
+ * class Student {
+    String name;
+    int score;
+
+    Student(String name, int score) {
+        this.name = name;
+             |       ㄴ 이거는 인수 name이다 
+             |   
+             ㄴ 여기서는 인스턴수 변수 name이다
+
+
+        this.score = score;
+    }
+ * 
+ * 
+ * 
+ * 
+ * 내일 한 번 class로 만들어보자 문제 
+ */
