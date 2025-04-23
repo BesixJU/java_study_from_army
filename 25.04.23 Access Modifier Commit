@@ -1,0 +1,25 @@
+ class Student {
+    public String name;       // 어디서든 접근 가능
+    protected int grade;      // 같은 패키지 + 상속 관계에서 접근 가능
+    int age;                  // (default) 같은 패키지에서만 접근 가능
+    private String password;  // 같은 클래스 내부에서만 접근 가능
+
+    public void printInfo() {
+        System.out.println("이름: " + name);
+        System.out.println("학년: " + grade);
+        System.out.println("나이: " + age);
+        System.out.println("비밀번호: " + password);
+    }
+}
+public class Main {
+    public static void main(String[] args) {
+        Student s = new Student();
+        s.name = "영희";         // public → 가능
+        s.grade = 3;             // protected → 같은 패키지니까 가능
+        s.age = 18;              // default → 가능
+        s.password = "1234";     // ❌ private → 오류 발생
+    }
+}
+
+
+// 접근제어자
