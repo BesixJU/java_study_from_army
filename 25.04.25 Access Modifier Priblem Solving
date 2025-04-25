@@ -1,0 +1,112 @@
+//접근제어자 문제 풀이
+
+public class Item {
+  //모든 멤버 변수를 private로 선언 (캡슐화)
+    private String name; 
+    private int price;
+    private int quantity;
+
+
+// Item 객체는 각 상품명, 가격, 수량를 파라미터로 가지는 생성자를 가짐
+    Item(String name, int price, int quantity)
+    {
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+//모든 멤버 변수를 private 즉 클래스 외부에서 접근 불가 하므로 getter 메서드를 사용하여 값을 반환
+    public String getName()
+    {
+        String s = this.name;
+        return s;
+    }
+
+    public int getPrice()
+    {
+        int i = this.price;
+        return i;
+    }
+    
+    public int getQuantity()
+    {
+        int i = this.quantity;
+        return i;
+    }
+}
+
+
+//ShoppingCart class
+public class ShoppingCart {
+
+
+// ShoppingCart 클래스는 위에서 만든 Item객체를 최대 10개를 가질 수 있는 객체
+    private Item[] items = new Item[10];
+    private int itemCount;
+
+// ShoppingCart에 최대 들어갈수 있는 Item 객체는 총 10개이므로 if문 걸어서 10개 이상 초과되면 입력 불가.
+    public void addItem(Item item)
+    {
+        if(itemCount < 10)
+        {
+            items[itemCount] = item;
+            itemCount++;
+        }
+        else
+        {
+            System.out.println("장바구니가 가득 찼습니다.");
+        }
+    }
+  // ShoppingCart에 들어가있는 상품들 출력하는 메서드 
+    public void displayItems()
+    {
+        
+        for (int i = 0; i<itemCount; i++) {     // iter을 사용하면 null에서 getter 메서드를 사용하려 하기 때문에 일반 for문 사용 **
+            int totalPrice = (items[i].getPrice()*items[i].getQuantity());
+            System.out.println("상품명: "+items[i].getName()+", 합계: "+ totalPrice);
+        }
+        System.out.println("전체 가격 합: "+calculateTotalPrice());
+    }
+
+
+    public int calculateTotalPrice()
+    {
+        int totalCart = 0;
+        for(int i = 0; i<itemCount; i++)
+        {
+            totalCart+=items[i].getPrice()*items[i].getQuantity();
+        }
+        return totalCart;
+    }
+}
+
+
+//main
+
+public class ShoppingCartMain {
+
+    public static void main(String[] args) {
+        ShoppingCart cart = new ShoppingCart();
+
+        Item item1 = new Item("마늘", 2000, 2);
+        Item item2 = new Item("상추", 3000, 4);
+       
+        cart.addItem(item1);
+        cart.addItem(item2);
+ 
+
+        cart.displayItems();
+
+    }
+}
+
+// 출력 결과
+
+상품명: 마늘, 합계: 4000
+상품명: 상추, 합계: 12000
+전체 가격 합: 16000
+
+문제 풀이 후기
+역시 C++에서 했던 게 있어서 그런지 문제 풀이 자체는 어렵지 않음 CodeSpace문제로 package를 사용하지 못하는게 아쉬움
+대신 접근제어자를 최대한 활용할만한 문제는 아닌 것 같고 그냥 객체지향이랑 접근제어자를 쓰는 방법 연습하는 중 인듯
+개념 자체는 1학년 때 이미 배운 것들이라 별로 어렵지 않다! 계속해보자
