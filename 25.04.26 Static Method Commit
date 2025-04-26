@@ -1,0 +1,129 @@
+static method의 개념
+
+
+public class DecoData {
+    private int instanceValue;
+    private static int staticValue;
+
+    public static void staticCall() {
+        //instanceValue++; //인스턴스 변수 접근, compile error
+        //instanceMethod(); //인스턴스 메서드 접근, compile error
+        // static에서 인스턴스 변수나 메서드는 접근 불가능하다. 왜? static은 클래스에 있는 변수 또는 메서드이기에
+        // 참조값이라는게 존재하지 않는다 한마디로 어디에 있는 인스턴스의 값인지 메서드인지 모르기에 바꿀 수 없다.
+       
+        staticValue++; //정적 변수 접근
+        staticMethod(); //정적 메서드 접근
+    }
+
+
+    public static void staticCallParameter(DecoData data)
+    {
+        data.instanceValue++;
+        data.instanceMethod();
+        // 하지만 직접적으로 인수에 인스턴스를 받는다면 참조값이 있으므로 정확한 인스턴스를
+        // 가르키게 되므로 static 메서드에서도 인스턴스의 값이나 메서드를 불러올 수 있다.
+    }
+
+    public void instanceCall() {
+        instanceValue++; //인스턴스 변수 접근
+        instanceMethod(); //인스턴스 메서드 접근
+        staticValue++; //정적 변수 접근
+        staticMethod(); //정적 메서드 접근
+    }
+    
+    private void instanceMethod() {
+        System.out.println("instanceValue=" + instanceValue);
+    }
+
+    private static void staticMethod() {
+        System.out.println("staticValue=" + staticValue);
+    }
+   }
+
+   /*
+    * [static 메서드를 왜 써야하는가?]
+        static 메서드는 객체(인스턴스)를 생성 할 필요 없는 메서드를 사용할 때 보통 사용한다
+        예를 들어 
+
+        class Math{
+            
+            public int add (int a, int b)
+            {
+                int sum = a + b;
+                return sum;
+            }
+        }
+
+        이런 식으로 작성하게 되면 Main 클래스에서 
+
+        Math math = new Math();
+        math.add(a,b);
+
+        이런 식으로 굳이 아무런 값도 들어가지 않는 객체를 생성해야 한다(비효율!)
+
+
+
+        하지만 static으로 선언하게 된다면
+        
+        class Math{
+            
+            public static int add (int a, int b)
+            {
+                int sum = a + b;
+                return sum;
+            }
+        }      
+            
+        Math.add(a,b);
+        
+        이렇게 깔끔하게 만들 수 있다
+
+
+        정리: static 메서드를 사용하는 이유는 util 같은 변수가 필요 없는 기능적 메서들은 쉽게 관리하기 위함이다!
+        
+        유의할점: 위 코드를 보면 알 수 있듯이 static 메서드는 인스턴스의 값을 변경하거나 인스턴스 메서드를 사용 할 수 없다.
+                 static 메서드 또한 인스턴스를 통한 접근을 지양 해야한다 자칫 인스턴스 메서드로 오해할 수 있기 때문!
+        
+        [main()은 정적 메서드!]
+        인스턴스 생성 없이 실행하는 가장 대표적인 메서드가 main이다 
+        >> 그래서 main을 쓸때
+
+        public static void main(String[] args) 라고 선언하는것이다!
+
+
+
+
+   */
+
+
+
+
+   // static method 문제풀이
+
+class Car
+{
+    String name;
+    static int count;
+
+    Car(String name)
+    {
+        this.name = name;
+        System.out.println("차량 구입, 이름: "+ name);
+        count++;
+    }
+
+    static void showTotalCars()
+    {
+        System.out.println("구매한 차량 수:"+ count);
+    }
+}
+
+public class CarMain {
+    public static void main(String[] args) {
+        Car car1 = new Car("K3");
+        Car car2 = new Car("G80");
+        Car car3 = new Car("Model Y");
+
+        Car.showTotalCars();
+    }
+}
