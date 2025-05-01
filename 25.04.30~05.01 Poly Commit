@@ -1,4 +1,30 @@
 다형성에 대한 정리
+
+public class Parent {
+    int parentValue;
+
+
+    void parentMethod(){
+        System.out.println("Parent Method");
+    }
+}
+
+public class Child extends Parent{
+
+    int childValue;
+    public void childMethod(){
+        System.out.println("Child Method");
+    }
+
+    public static void call(Parent parent){
+        if(parent instanceof Child){
+            System.out.println("Child 인스턴스 맞음");
+            Child child = (Child) parent;
+            child.childMethod();
+        }
+    }
+}
+
 public class CastingMain {
 
     public static void main(String[] args) {
@@ -23,7 +49,11 @@ public class CastingMain {
       
         // 다운 캐스팅
         Child poly2 = (Child) poly1;    // 다운 캐스팅
-        poly2.childMethod();                     
+        poly2.childMethod();             
+
+      
+        
+        
     }
 }
 
@@ -63,8 +93,39 @@ public class CastingMain {
  *          부모타입 A = new 부모타입();
  *          자식타입 B = (자식타입) A;          >> 메모리 상에 자식타입이 존재하지 않으므로 컴파일 오류 발생.
  * 
+ * [intstanceof]
+ *  - 다운캐스팅 시 변환될 타입이 실제로 존재하는지 알려주는 함수
+ *   
+ * 
+ *      Ex)
+ *            - 부모타입 instanceof 부모 타입 >> 참
+ *            - 자식타입 instanceof 자식 타입 >> 참
+ *            - 부모타입 instanceof 자식 타입 >> 참 
+ *            - 자식타입 instanceof 부모 타입 >> 거짓
+ *      EX)
+          void call(Parent parent){
+                if(parent instanceof Child){        // Child 라는 클래스가 실제로 존재하므로 참
+                    System.out.println("Child 인스턴스 맞음");
+                    Child child = (Child) parent;
+                    child.childMethod();
+                }
+            }  
+                
+
+    이 메서드는 아쉬운 점이 있다. 어차피 다운캐스팅 할건데 코드가 확인하고 다운캐스팅하느라 코드가 길어진다
+        EX)
+          void call(Parent parent){
+                if(parent instanceof Child child){ << 자바16 이상부터는 이렇게 바로 참이라면 다운 캐스팅을 진행 할 수 있다.       
+                    System.out.println("Child 인스턴스 맞음");
+                    child.childMethod();
+                }
+            }  
  * 
  * 
+ * [메서드 오버라이딩]
+ * - 메서드 오버라이딩은 이미 배웠다. 
+ * - 각 변수가 똑같은 인스턴스를 생성하고 메서드 호출시 인스턴스의 메서드를 호출하는 건 같다.
+ * - 그렇다면 업캐스팅 한 변수에서는?
+ * - 바로 오버라이딩 된 메서드를 우선적으로 실행한다.
  * 
- * 
- */
+*/
