@@ -1,0 +1,90 @@
+package Pay;
+
+public interface Pay {                  다같은 결제 방식이므로 한번에 관리하기 위해 인터페이스를 만듦
+    boolean pay(int amount);
+}
+
+package Pay;
+
+public class KakaoPay implements Pay {
+    @Override
+    public boolean pay(int amount) {
+        System.out.println("카카오페이 시스템과 연결합니다.");
+        System.out.println(amount + "원 결제를 시도합니다.");
+        return true;
+        }
+
+}
+
+package Pay;
+public class NaverPay implements Pay {
+    @Override
+    public boolean pay(int amount) {
+        System.out.println("네이버페이 시스템과 연결합니다.");
+        System.out.println(amount + "원 결제를 시도합니다.");
+        return true;
+    }
+
+}
+
+package Pay;
+public class PayService {
+    public void processPay(String option, int amount) {
+        boolean result = false;
+        System.out.println("결제를 시작합니다: option=" + option + ", amount=" + amount);
+
+        Pay pay = selectPay(option);                  //이 Pay는 무슨 Pay인지 업캐스팅하는 메서드.
+
+        result = pay.pay(amount);                      //이것의 결제가 제대로 이루어지는지 확인.
+        
+        if (result) {
+            System.out.println("결제가 성공했습니다.");
+        } else {
+            System.out.println("결제가 실패했습니다.");
+        }
+        
+   }
+   
+   public Pay selectPay(String option){               //실질적 이 문제의 답 바로 결제수단이 추가 될 경우 여기에 추가하면 OCP를 지키면서 할 수 있다.
+    Pay pay;
+    boolean result = false;
+    if (option.equals("kakao")) {
+        pay = new KakaoPay();                          //각 조건마다 업캐스팅.
+    } else if (option.equals("naver")) {
+        pay= new NaverPay();
+    } else {
+        pay = null;                                    //조건이 맞지 않을 경우 그냥 null을 입력해버리고 결제를 못하도록출력
+        System.out.println("결제 수단이 없습니다.");
+        result = false;
+    }
+    return pay;
+   }
+}
+
+package Pay;
+
+import java.util.Scanner;
+public class PayMain {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        PayService payService = new PayService();
+
+
+        while (true) {
+            System.out.print("결제 수단을 입력하세요: ");
+            String option = scanner.nextLine();
+                if(!option.equals("exit")){
+
+                    System.out.print("결제 금액을 입력하세요: ");
+                    int amount = scanner.nextInt();
+                    scanner.nextLine();                    // 버퍼 비워주기
+                    payService.processPay(option, amount);
+                }
+                else{
+                    System.out.println("프로그램을 종료합니다.");
+                    break;
+                }
+
+        }
+        }
+}
