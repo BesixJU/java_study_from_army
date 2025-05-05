@@ -1,0 +1,248 @@
+/*
+
+[제네릭이란?]
+🔹 제네릭이란?
+"클래스나 메서드에 사용할 데이터 타입을 나중에 지정할 수 있도록 하는 기능"
+즉, 어떤 타입이든 받을 수 있도록 타입을 매개변수처럼 처리하는 거야.
+
+🔸 제네릭을 왜 쓰는가?
+컴파일 타임에 타입 체크 가능 → 오류를 미리 방지
+
+형변환이 필요 없음 → 코드 간결
+
+재사용성 증가 → 하나의 코드로 다양한 타입 처리
+
+🔸 메서드에 제네릭 쓰는 법
+
+public <T> void printItem(T item) {
+    System.out.println(item);
+}
+
+🔸 제네릭의 제한
+기본형(int, double 등)은 사용 못 해 → 래퍼 클래스(Integer, Double 등) 사용
+
+static 멤버에는 사용 불가
+
+타입 정보는 컴파일 시 사라짐 → 타입 소거(Type Erasure)
+
+
+
+
+ * [제네릭의 특성]
+ * - 제네릭 클래스를 사용할 때는 타입을 미리 결정하지 앟는다.
+ * - 대신에 클래스명 오른쪽에 <T>와 같이 선언하면 제네릭 클래스가 된다. 여기서 T를 "타입 매개변수라고 한다"
+ * - 이 T는 이후에 integer, String 같은 타입으로 변할 수 있다.
+ * - 클래스 내부에 T타입이 필요한 곳에 T value 같이 타입 매개변수를 적어두면 된다.  
+ * - 원하는 모든 타입 가능.
+ * 
+ * [제네릭의 용어 및 관례]
+ * - 타입 매개변수: GenericClass<T>에서 T를 의미한다.
+ * - 타입 인자 : GenericClass<Integer>의 Integer를 타입 인자라고 한다 
+ 
+ * 용어 정리
+제네릭(Generic) 단어
+    제네릭이라는 단어는 일반적인, 범용적인이라는 영어 단어 뜻이다.
+    풀어보면 특정 타입에 속한 것이 아니라 일반적으로, 범용적으로 사용할 수 있다는 뜻이다.
+
+제네릭 타입 (Generic Type)
+    클래스나 인터페이스를 정의할 때 타입 매개변수를 사용하는 것을 말한다.
+    제네릭 클래스, 제네릭 인터페이스를 모두 합쳐서 제네릭 타입이라 한다.
+    타입은 클래스, 인터페이스, 기본형( int 등)을 모두 합쳐서 부르는 말이다.
+    예: class GenericBox<T> { private T t; }
+    여기에서 GenericBox<T> 를 제네릭 타입이라 한다.
+
+
+타입 매개변수 (Type Parameter)
+    제네릭 타입이나 메서드에서 사용되는 변수로, 실제 타입으로 대체된다.
+    예: GenericBox<T>
+    여기에서 T 를 타입 매개변수라 한다.
+
+타입 인자 (Type Argument)
+    제네릭 타입을 사용할 때 제공되는 실제 타입이다.
+    예: GenericBox<Integer>
+    여기에서 Integer 를 타입 인자라 한다.
+
+
+[타입 추론: 생성하는 제네릭타입 생략 가능]
+        GenericBox<Integer> integerBox2 = new GenericBox<>();   // 앞에 있는 다이아몬드 안에 Integer가 있기에 생성자 다이아몬드에는 생략
+ */    
+
+
+[예제코드 1}
+- 다음 코드들은 Integer, String 타입을 저장하고 불러오는 Box 클래스를 만들고 활용하는 것이다.
+- 문제점은 한가지 타입이 추가될 때마다 타입을 바꿔주면 해야하거나 Box라는 부모 클래스로 만들고 다운캐스팅을 하는것인데 이게 굉장히 위험하다.
+- 그래서 나온 것이 바로 제네릭 클래스.
+
+public class BoxMain1 {
+    public static void main(String[] args) {
+        //Integer Type
+        ObjectBox intergerBox = new ObjectBox();
+        intergerBox.set(10);
+        Integer integer = (Integer)intergerBox.get();//Object -> Integer 로 다운캐스팅
+        System.out.println("Interger: "+ integer);
+        
+        //String Type
+        ObjectBox stringBox = new ObjectBox();
+        stringBox.set("Hello");
+        String string = (String)stringBox.get();//Object -> String Downcasting
+        System.out.println("String: "+string);
+        
+        // 위 코드의 문제점이 몇개 있다.
+        // 1. 다운캐스팅을 계속 사용하는 것 / 2. 잘못된 타입 입력이 가능하다는것.
+        // 해결책: 제네릭을 적용한다.
+    }
+}
+
+[제네릭 클래스를 활용한 예제]
+public class GenericBox<T>{
+    
+    private T value;
+
+    public void set(T value){
+        this.value = value;
+    }
+
+    public T get(){
+        return value;
+    }
+
+}
+
+
+public class BoxMain2 {
+ 
+    public static void main(String[] args) {
+
+        GenericBox<Integer> integerBox = new GenericBox<Integer>(); // 생성 시점에 T의 타입 결정
+        integerBox.set(10);
+        //integerBox.set("문자 100"); //Integer 타입으로 변환(캐스팅 필요 X)
+        Integer integer = integerBox.get();
+        System.out.println(integer);
+
+
+        GenericBox<String> stringBox = new GenericBox<String>();    // 생성 시점에 T의 타입을 String으로 결정.
+        stringBox.set("Hello"); 
+        String str = stringBox.get();
+        System.out.println(str);
+
+    }
+}
+
+
+
+[예제코드 2]
+// 위의 코드와 같은 객체를 저장하는 Box 제네릭 클래스.
+
+public class Box<T> {  
+    private T value;
+
+    public void set(T value){
+        this.value = value;
+    }
+
+    public T get(){
+        return value;
+    }
+
+
+}
+
+[Animal 클래스]
+public class Animal {       // 원래 Aimal 클래스는 인터페이스로 하는게 맞는데 영한이 형이 이렇게 했다 ㅇㅇ
+    private String name;
+    private int size;
+
+    public Animal(String name, int size){
+        this.name = name;
+        this.size = size;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public int getSize(){
+        return size;
+    }
+
+    public void sound(){
+        System.out.println("동물 울음 소리");
+    }
+
+
+
+//toString을 내가 스킵한 부분에서 다뤘는데, 모든 클래스는 Object라는 부모를 가진다.
+원래 객체를 출력하면 그 객체의 해시코드가 출력되지만 toString을 오버라이딩하면 객체를 System.out.println(객체);라고 해도 
+이쁘게 출력된다.
+
+
+    public String toString(){                                      
+        return "Animal{" +
+                "name = " + name + "\"" +
+                ", Size = "+ size +"}";
+    }
+}
+
+
+[Dog class]
+public class Dog extends Animal {
+
+    public Dog(String name, int size){
+        super(name, size);
+    }
+
+    @Override
+    public void sound() {
+        System.out.println("멍멍");
+         super.sound();
+    }
+
+}
+
+
+[Cat class]
+public class Cat extends Animal {
+
+    public Cat(String name, int size){
+        super(name, size);
+    }
+
+    @Override
+    public void sound() {
+        System.out.println("냐옹");
+         super.sound();
+    }
+
+}
+
+public class AnimalMain {
+    public static void main(String[] args) {
+        Animal animal = new Animal("동물", 0);
+        Dog dog = new Dog("강아지", 100);
+        Cat cat = new Cat("고양이", 50);
+
+
+        Box<Dog> dogBox = new Box<>();// 강아지만 들어갈 수 있는 Box
+        dogBox.set(dog);
+        Dog findDog = dogBox.get();
+        System.out.println("findDog: "+ findDog);
+
+        Box<Cat> catBox = new Box<>();// 고양이만 들어갈 수 있는 Box
+        catBox.set(cat);
+        Cat findCat = catBox.get();
+        System.out.println("findCat: "+ findCat);
+        
+
+        //모든 동물들은 Animal 클래스를 상속 받고있기에
+        //제네릭 클래스인 Box에 모든 동물이 들어갈 수 있다.
+        Box<Animal> animalBox = new Box<>();
+        animalBox.set(animal);      animalBox = animal
+        animalBox.set(dog);          animalBox = dog
+        animalBox.set(cat);          animalBox = cat
+        Animal findAnimal = animalBox.get();
+        System.out.println("findAnimal = " + findAnimal);
+    }
+}
+
+
+
