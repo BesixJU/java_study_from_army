@@ -1,0 +1,97 @@
+[문제 1]
+- Container 클래스를 만든다. 
+- 이 클래스는 제네릭 타입으로 타입이 실제로 선언될 때 타입이 설정되며 비어있는지 값이 있는지 저장된 데이터가 무엇인지 기능을 구현한다.
+- 하나도 안 어려웠다.
+
+public class Container<T> {
+    private T value;
+
+    public boolean isEmpty(){
+        return this.value == null;
+    }
+
+    public T getItem(){
+        return this.value;
+    }
+
+    public void setItem(T value){
+        this.value = value;
+    }
+
+}
+
+public class ContainerTest {
+    public static void main(String[] args) {
+        Container<String> stringContainer = new Container<>();
+        System.out.println("빈값 확인1: " + stringContainer.isEmpty());
+
+        stringContainer.setItem("data1");
+        System.out.println("저장 데이터: " + stringContainer.getItem());
+        System.out.println("빈값 확인2: " + stringContainer.isEmpty());
+        
+        Container<Integer> integerContainer = new Container<>();
+        integerContainer.setItem(10);
+        System.out.println("저장 데이터: " + integerContainer.getItem());         
+    }
+}
+
+
+[문제 2]
+- 이 문제는 위의 문제와 달리 조금 어려웠는데 바로 매개 타입 인수를 2개를 사용하는 문제였다.
+- 이게 그냥 타입 매개변수를 하나만 사용해서 별로 몰랐는데 이렇게 사용하는 법도 있다는 걸 알았다.
+- 근데 어려울 건 없다 선언해줄 때 타입을 N개 사용하기 위해 선언한다면 그냥 타입 매개변수도 T1, T2처럼 N개씩 생성해주면 된다.
+- 물론 T1,T2의 타입은 실제로 사용될 떄는 다른 타입이므로 각각 다른 메서드로 선언해줘야한다.
+package ex;
+
+public class Pair<T1, T2> {     //타입을 2개 받아야하므로 타입 매개변수도 2개로 설정해둬야함
+    private T1 firstValue;
+    private T2 secondValue;
+
+    public void setFirst(T1 value){
+        this.firstValue = value;
+    }
+
+    public void setSecond(T2 value){
+        this.secondValue = value;
+    }
+
+    public T1 getFirst(){
+        return firstValue;
+    }
+
+    public T2 getSecond(){
+        return secondValue;
+    }
+
+
+    @Override
+    public String toString(){
+        return "Pair{" +
+        "first=" + firstValue +
+        ", second=" + secondValue +
+        '}'; 
+        
+    }
+
+}
+package ex;
+
+public class PairTest {
+    public static void main(String[] args) {
+    
+        Pair<Integer, String> pair1 = new Pair<>();
+        pair1.setFirst(1);
+        pair1.setSecond("data");
+        System.out.println(pair1.getFirst());
+        System.out.println(pair1.getSecond());
+        System.out.println("pair1 = " + pair1);
+
+        
+        Pair<String, String> pair2 = new Pair<>();
+        pair2.setFirst("key");
+        pair2.setSecond("value");
+        System.out.println(pair2.getFirst());
+        System.out.println(pair2.getSecond());
+        System.out.println("pair2 = " + pair2);
+}
+}
