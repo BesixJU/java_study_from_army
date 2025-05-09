@@ -1,0 +1,242 @@
+제네릭의 타입 파라미터 제한에 대하여 정리
+
+해당 제네릭 커밋과 커밋2는 Animal, cat, dog 클래스를 공유한다.
+
+
+
+
+[예제코드 1]
+- Dog와 Cat이 각각 들어갈 수 있는 병원을 하나씩 만든다.
+- 각각의 기능을 수행한다.
+
+
+{개 병원}
+public class DogHospital {
+
+    private Dog animal;
+
+    public void set(Dog animal){
+        this.animal = animal;
+    }
+
+    public void checkUp(){
+        System.out.println("동물 이름" + animal.getName());
+        System.out.println("동물 크기 "+ animal.getSize());
+        animal.sound();
+    }
+
+    public Dog bigger(Dog target){
+        return animal.getSize() > target.getSize() ? animal : target;
+    }
+}
+
+
+{고양이 병원}
+public class CatHospital {
+    private Cat animal;
+
+    public void set(Cat animal){
+        this.animal = animal;
+    }
+
+    public void checkUp(){
+        System.out.println("동물 이름" + animal.getName());
+        System.out.println("동물 크기 "+ animal.getSize());
+        animal.sound();
+    }
+
+    public Cat bigger(Cat target){
+        return animal.getSize() > target.getSize() ? animal : target;
+    }
+}
+
+{메인 ver 1}
+public class AnimalHospitalMain0 {
+    public static void main(String[] args) {
+        DogHospital dogHospital = new DogHospital();
+        CatHospital catHospital = new CatHospital();
+    
+        Dog dog = new Dog("멍멍이 1", 100);
+        Cat cat = new Cat("냐옹이", 300);
+
+        // 개 병원
+        dogHospital.set(dog);
+        dogHospital.checkUp();
+
+        // 고양이 병원
+        catHospital.set(cat);
+        catHospital.checkUp();
+    }
+} 
+
+해당 코드에는 문제점이 몇가지 존재한다. 일단 코드 중복이 있다. 먼저 다형성으로 만들어서 코드 중복을 없애보자
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+{동물 병원 ver 1}
+public class AnimalHospitalV1 {
+    private Animal animal;
+
+    public void set(Animal animal){
+        this.animal = animal;
+    }
+
+    public void checkUp(){
+        System.out.println("동물 이름" + animal.getName());
+        System.out.println("동물 크기 "+ animal.getSize());
+        animal.sound();
+    }
+
+
+    public Animal getBigger(Animal target){
+        return animal.getSize() > target.getSize() ? animal : target;
+    }    
+}
+
+
+Dog 와 Cat 둘다 Animal의 하위 클래스이기에 동물 병원클래스로 묶었다.
+
+
+{메인 ver2}
+package genericTest2;
+// 다형성을 이용한 경우
+public class AnimalHospitalMain1 {
+
+    public static void main(String[] args) {
+        AnimalHospitalV1 dogHospital = new AnimalHospitalV1();
+        AnimalHospitalV1 catHospital = new AnimalHospitalV1();
+    
+        Dog dog = new Dog("멍멍이 1", 100);
+        Cat cat = new Cat("냐옹이", 300);
+
+        // 개 병원
+        dogHospital.set(dog);
+        dogHospital.checkUp();
+
+        // 고양이 병원
+        catHospital.set(cat);
+        catHospital.checkUp();
+
+        //문제 1: 개병원에 고양이 전달.
+        //dogHospital.set(cat);    
+
+        //문제 2: 개타입으로 변환할때 다운캐스팅이 필요하다.
+        dogHospital.set(dog);
+        Dog biggerDog = (Dog) dogHospital.getBigger(new Dog("멍멍이2", 200));
+        System.out.println("biggerDog: "+ biggerDog);
+
+        //문제점) 1. 코드 재사용성 O 2.다운캐스팅 필요 3. 개병원에 고양이 캐스팅 가능.
+    
+    }
+}
+
+코드 중복은 없앴지만 새로운 문제가 생겼다 바로 다운캐스팅을 너무 많이 쓰는 것과 개병원에 고양이가 들어가는 등의 잘못된 입력을 컴파일 오류로 받아 들이지 못한다.
+제네릭 클래스로 만들어서 해결해보자.
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+{병원 ver2}
+public class AnimalHopspitalV2<T> {  // 제네릭 클래스로 선언
+    private T animal;
+
+    public void set(T animal) {
+        this.animal = animal;
+    }
+
+    public void checkUp(){      
+        //컴파일 오류
+        //System.out.println("동물 이름" + animal.getName());
+        //System.out.println("동물 크기 "+ animal.getSize());
+        //animal.sound();
+    }
+    public T getBigger(Animal target){
+        //컴파일 오류
+        // return animal.getSize() > target.getSize() ? animal : target;    
+        return null;
+    }
+}
+
+
+ 컴파일 오류가 난다 왜일까? 바로 getName() 과 getSize() 때문이다 우리는 지금 타입파라미터 T에 뭐가 올지 모른다 
+ Integer나 String이 올 수도 있다 근데 Integer와 String 클래스는 위의 메서드가 없기에 컴파일 오류가 난다! 즉 이렇게 해서는 내가 원하는 제네릭을 활용한 코드 중복 제거를 할 수 없다.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ 정답은 타입 "매개변수 제한"이다.
+
+
+
+ 
+{병원 ver3}
+package genericTest2;
+// 타입 매개변수를 제한한다.
+
+public class AnimalHospitalV3<T extends Animal> {
+// <T extends Animal>을 붙이면 타입 매개변수 T가 Animal과 그 자식만 받을 수 있도록 제한한다.
+   
+    private T animal;
+
+    public void set(T animal){
+        this.animal = animal;
+    }
+
+    public void checkUp(){
+        System.out.println("동물 이름" + animal.getName());
+        System.out.println("동물 크기 "+ animal.getSize());
+        animal.sound();
+    }
+
+
+    public T getBigger(T target){
+        return animal.getSize() > target.getSize() ? animal : target;
+    }       
+}
+
+
+{메인 ver 3}
+public class AnimalHospitalMain2 {
+  public static void main(String[] args) {
+  
+          //각각의 파라미터의 타입을 정해준다.
+          AnimalHospitalV3<Dog> dogHospital = new AnimalHospitalV3<>();
+          AnimalHospitalV3<Cat> catHospital = new AnimalHospitalV3<>();
+
+          
+          Dog dog = new Dog("멍멍이 1", 100);
+          Cat cat = new Cat("냐옹이", 300);
+  
+          // 개 병원
+          dogHospital.set(dog);
+          dogHospital.checkUp();
+  
+          // 고양이 병원
+          catHospital.set(cat);
+          catHospital.checkUp();
+  
+          //문제해결 1: 개병원에 고양이 전달.
+          //dogHospital.set(cat);     //컴파일 오류    
+  
+          //문제해결 2: 개타입으로 변환할때 다운캐스팅이 필요하다.
+          dogHospital.set(dog);
+          Dog biggerDog = dogHospital.getBigger(new Dog("멍멍이 2", 200)); // 다운캐스팅이 필요 없다. 왜? 애초에 AnimalHospital의 타입이 Dog라고 인스턴스 생성 때부터 정해져있기 때문에
+          System.out.println("biggerDog: "+ biggerDog);
+  }
+}
+
+제한된 타입 파라미터를 사용하여 재사용가능하고 다운캐스팅도 안하고 입력 실수도 없앨 수 있게 되었다.
+
+
+
+
+
+
+
+[정리]
+제한된 타입 파라미터 클래스는 제네릭 클래스를 만들때 허용할 타입을 제한하는 것이다.
+위의 예제와 같이 특정 클래스에서 사용하는 메서드가 있기에 이런 메서드를 사용하기 위해 제한하는 것이다.
+✅ 기본 문법
+public class 클래스<T extends 특정 클래스> {
+    바디
+}
+
+
+
