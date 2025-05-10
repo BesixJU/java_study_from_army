@@ -1,0 +1,261 @@
+[제네릭 메서드 정리]
+
+
+public class GenericMethod {
+
+    //일반 method
+    public static Object objMethod(Object obj){
+        System.out.println("Object print : " + obj);
+        return obj;
+    }
+
+    // generic method
+    // 선언방식:  <타입 매개변수> 타입매개변수 함수이름();
+    public static<T> T genericMethod(T obj){
+        System.out.println("Object print: " + obj);
+        return obj;
+    }
+
+    // 제한된 generic method
+    // 선언방식:  <타입 매개변수 extends 클래스> 타입매개변수 함수이름();
+    public static<T extends Number> T numbercMethod(T obj){
+        System.out.println("Object print: " + obj);
+        return obj;
+    }    
+}
+
+앞서 살펴본 제네릭 타입과 지금부터 살펴볼 제네릭 메서드는 둘다 제네릭을 사용하기는 하지만 서로 다른 기능을 제공한다
+
+[제네릭 타입]
+  정의: GenericClass<T>
+  타입 인자 전달: 객체를 생성하는 시점
+  예) new GenericClass<String>
+  
+[제네릭 메서드]
+  정의: <T> T genericMethod(T t)
+  타입 인자 전달: 메서드를 호출하는 시점
+  예) GenericMethod.<Integer>genericMethod(i)
+
+제네릭 메서드를 사용할 때는 항상 메서드 앞에 타입인자를 선언하지 않아도 된다.
+아래는 예시이다 
+
+public class MethodMain1 {
+    public static void main(String[] args) {
+
+        Dog dog = new Dog("멍멍이", 100);
+        Cat cat = new Cat("야옹이", 50);
+
+      
+        
+        //타입 인자 명시적 전달              
+        AnimalMethod.<Dog>checkUp(dog);
+        AnimalMethod.<Cat>checkUp(cat);
+
+        //자바 컴파일러에서 각각 메서드의 타입 매개변수인 T가 Dog, Cat으로 판단해 메서드 앞의 <Dog>, <Cat>를 스킵 할 수 있다.
+        //타입 추론 전달
+        AnimalMethod.checkUp(dog);
+        AnimalMethod.checkUp(cat);  // 이렇게도 가능하다.
+
+        Dog targetDog = AnimalMethod.getBigger(new Dog("비교 멍멍이", 200),dog);
+        System.out.println("biggerDog is"+ targetDog);
+
+    }
+}
+
+[제네릭 메서드 활용]
+AnimalHospital 클래스의 bigger과 checkUp 메서드를 제네릭 메서드로 만들어보자.
+
+
+public class AnimalMethod {
+    
+    public static <T extends Animal> void checkUp(T animal){
+        System.out.println("동물 이름" + animal.getName());
+        System.out.println("동물 크기 "+ animal.getSize());
+        animal.sound();
+    }
+
+
+    public static <T extends Animal> T getBigger(T target, T animal ){
+        return animal.getSize() > target.getSize() ? animal : target;
+    }       
+}
+
+그렇다면 이런 생각도 들 수 있다
+" 만약 클래스의 제네릭 타입과 제네릭 메서드의 타입 매개변수가 같으면 어떻게 되지?
+
+-------------------------------------------------------
+
+//제네릭 메서드를 제네릭 클래스 안에도 설정 할 수 있다.
+public class ComplexBox<T extends Animal> {
+
+    private T animal;
+
+    public void set(T animal){
+        this.animal = animal;
+    }
+
+    public <Z> Z printAndReturn(Z z){
+        System.out.println("animal.className: " + animal.getClass().getName());
+        System.out.println("T.className: "+z.getClass().getName());
+        return z;
+    }
+}  
+
+
+    사실 그렇게 어렵지 않다 그냥 메서드의 인자와 클래스의 제네릭 타입은 별개로 보는거다.
+    코드를 읽으면 바로 이해가 될 정도이기 한데 그래도 헷갈릴 수 있으니
+    제네릭 타입과 제네릭 메서드의 타입 인자는 다른 문자로 표기하는 것이 관례이다.
+
+    결론: 
+    클래스의 제네릭 타입보다 제네릭 메서드의 타입인자가 우선순위를 가진다
+    즉 그 클래스의 매개인자(여기서는 T)와 상관없이 Z가 결정된 타입으로 메서드가 동작한다.
+    
+    주의점:
+    여기서 적용된 제네릭 메서드의 타입 매개변수 Z 는 상한이 없다. 따라서 Object 로 취급된다.
+    Object 로 취급되기 때문에 z.getName() 과 같은 Animal 에 존재하는 메서드는 호출할 수 없다.
+    (그냥 z.getClass().getName()으로 쓴 이유이다. 상한 제한하면 z.getName()도 된다.
+
+
+
+
+
+[와일드 카드]
+
+public class WhildCardEx {
+
+    //제네릭 메서드로 간단한 출력과 반환 기능을 구현.
+    
+    static<T> void printGenericV1(Box<T> box){
+        System.out.println("T = "+ box.get());
+    }    
+    
+    static<T extends Animal> void printGenericV2(Box<T> box){
+        T t = box.get();
+        System.out.println("이름 = "+ t.getName());
+    }
+
+    static<T extends Animal> T printAndReturn(Box<T> box){
+        T t = box.get();
+        System.out.println("이름 = "+ t.getName());
+        return t;
+    }
+
+
+    와일드카드 메서드
+    ? 안에는 Dog,Objec,Cat,Animal 어떤 타입이든 들어 올 수 있다.
+
+    
+    static void printWildCard(Box<?> box){             
+        System.out.println("T = "+ box.get());
+    }
+
+    //상한 와일드카드 메서드
+    static void printWildCardV2(Box<? extends Animal>  box){ 
+        Animal animal = box.get();
+        System.out.println("이름 = "+ animal.getName());
+    }
+
+    static Animal printAndReturnWildCard(Box<? extends Animal> box){
+        Animal animal  = box.get();
+        System.out.println("이름 = "+ animal .getName());
+        return animal ;
+    }
+
+    //하한 와일드카드 메서드
+    static void writeBox(Box<? super Animal> box) {
+        box.set(new Dog("멍멍이", 100));
+    }
+    
+    이 코드는 ? 가 Animal 타입을 포함한 Animal 타입의 상위 타입만 입력 받을 수 있다는 뜻이다.
+    
+    정리하면 다음과 같다.
+    Box<Object> objBox : 허용, Box<Animal> animalBox : 허용, Box<Dog> dogBox : 불가, Box<Cat> catBox : 불가
+    하한을 Animal 로 제한했기 때문에 Animal 타입의 하위 타입인 Box<Dog> 는 전달할 수 없다
+
+
+
+
+
+
+
+
+  
+    [제네릭 메서드 vs 와일드 카드]
+    
+    - printGenericV1이나 printWildCardV1이나 비슷한 기능을 구현한다
+
+    - 하지만 와일드카드는 제네릭 메서드가 아니다. 일반적인 메서드이다.
+
+    - 와일드 카드는 다이아몬드 안에 타입이 정해진 즉 Box<Dog>,Box<Cat>같은
+      타입 인자가 정해진 타입을 받아서 사용 할 수 있다는 거다.
+      
+    - printGeneric은 단순히 T의 값이 무엇인지 출력하는 메서드이다 
+      하지만 타입 매개변수를 타입 인자에 전달해서 타입을 결정하는 쓸데없이 복잡한 과정을 거쳐야한다.
+      그러나 printWildCard는 일반적인 메서드다 타입을 결정할 필요도 뭣도 없다 
+      그냥 매개변수가 제네릭타입 다 들어올 수 있는 것 뿐이다. 이는 훨씬 간편하고 쓰기도 쉽다.
+
+    - 제네릭 타입이나 제네릭 메서드를 정의하는게 꼭 필요한 상황이 아니라면, 더 단순한 와일드카드 사용을 권장한다.
+      꼭 필요한 경우가 뭔가?  >> 타입을 명확하게 반환해야 하는 경우같은 타입을 명확히 하고 싶을 때 사용한다 (와일드 카드는 상한,하한 제한만 있지 타입을 딱 명확하게 정하지 않기에)
+
+        static <T extends Animal> T printAndReturnGeneric(Box<T> box) {
+            T t = box.get();
+            System.out.println("이름 = " + t.getName());
+            return t;
+        }
+
+        static Animal printAndReturnWildcard(Box<? extends Animal> box) {
+            Animal animal = box.get();
+            System.out.println("이름 = " + animal.getName());
+        return animal;
+    }
+    
+    
+    printAndReturnGeneric() 은 다음과 같이 전달한 타입을 명확하게 반환할 수 있다.
+    
+    Dog dog = WildcardEx.printAndReturnGeneric(dogBox)
+
+    
+    반면에 printAndReturnWildcard() 의 경우 전달한 타입을 명확하게 반환할 수 없다. 여기서는 Animal 타입으로 반환한다.
+    
+    Animal animal = WildcardEx.printAndReturnWildcard(dogBox)
+
+
+
+
+
+
+    [제네릭 메서드 실행 예시]
+        //1. 전달
+        printGenericV1(dogBox)
+
+        //2. 제네릭 타입 결정 dogBox는 Box<Dog> 타입, 타입 추론 -> T의 타입은 Dog
+        static <T> void printGenericV1(Box<T> box) {
+        System.out.println("T = " + box.get());
+        }
+
+        //3. 타입 인자 결정
+        static <Dog> void printGenericV1(Box<Dog> box) {
+        System.out.println("T = " + box.get());
+        }
+
+        //4. 최종 실행 메서드
+        static void printGenericV1(Box<Dog> box) {
+        System.out.println("T = " + box.get());
+        }
+
+        [와일드 카드 실행 예시]
+
+        //1. 전달
+        printWildcardV1(dogBox)
+
+        //이것은 제네릭 메서드가 아니다. 일반적인 메서드이다.
+        //2. 최종 실행 메서드, 와일드카드 ?는 모든 타입을 받을 수 있다.
+        static void printWildcardV1(Box<?> box) {
+        System.out.println("? = " + box.get());
+        }
+
+    */
+}
+
+
+
