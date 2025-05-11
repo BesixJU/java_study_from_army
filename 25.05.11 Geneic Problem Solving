@@ -1,0 +1,200 @@
+제네릭의 연습문제를 풀어보자
+[문제에서 공유하는 클래스]
+
+//각각의 유닛을 컨트롤하는 상위 클래스 BioUnit
+public class BioUnit {
+        private String name;    
+        private int hp;
+        public BioUnit(String name, int hp) {  
+            this.name = name;        this.hp = hp;    
+        }
+
+        public String getName() {
+            return name;    
+        }
+
+        public int getHp() { 
+            return hp;    
+        }
+
+        @Override    
+        public String toString() {
+            return "BioUnit{" +                
+            "name='" + name + '\'' +                
+            ", hp=" + hp +                
+            '}';    }
+    }
+
+//Marine 클래스
+public class Marine extends BioUnit {
+    public Marine(String name, int hp) {        
+        super(name, hp);    
+    } 
+}
+
+//Zealot 클래스
+public class Zealot extends BioUnit {
+    public Zealot(String name, int hp) {        
+        super(name, hp);    
+    } 
+}
+
+// Zergling 클래스
+public class Zergling extends BioUnit {
+    public Zergling(String name, int hp) {        
+        super(name, hp);    
+    } 
+}
+
+[연습 문제 1]
+- 두 유닛을 입력받아서 체력이 높은 유닛을 반환하는 UnitUtil.maxHp() 메서드를 만들어라
+- UnitUtil.maxHp()의 조건: 제네릭 메서드 사용, 입력하는 유닛의 타입과 반환하는 유닛의 타입이 같을 것.
+
+//UnitUtil 클래스
+public class UnitUtil {
+    
+     static <T extends BioUnit> T maxHp(T t1, T t2){    //타입 매개변수 T를 받아서 여러가지 타입에 대응 할 수 있음
+        if(t1.getHp() > t2.getHp()){
+            return t1; //t1의 체력이 높을 때 반환
+        }
+        else{
+            return t2; //t2의 체력이 높을 때 반환
+        }
+    }
+}
+
+
+//UnitUtilTest 클래스
+import ex.ex2.Marine;
+import ex.ex2.Zealot;
+
+public class UnitUtilTest {
+    public static void main(String[] args) {
+        Marine m1 = new Marine("마린1", 40);
+        Marine m2 = new Marine("마린2", 50);
+        Marine resultMarine = UnitUtil.maxHp(m1,m2);
+        System.out.println("resultMaine = "+ resultMarine);
+
+        Zealot z1 = new Zealot("질럿1", 100);
+        Zealot z2 = new Zealot("질럿2", 150);
+        Zealot resulZealot = UnitUtil.maxHp(z1, z2);
+        System.out.println("resultZealot = "+ resulZealot);
+
+        
+    }
+}
+
+실행결과: 
+resultMarine = BioUnit{name='마린2', hp=50} 
+resultZealot = BioUnit{name='질럿2', hp=150}
+
+총평:
+딱히 어려울 건 없다 그냥 상한 제네릭 메서드를 사용하면 된다 삼항 연산자 사용하면 더 간단하게 할 수 있는데 가독성을 위해서 if문을 썼다
+
+
+
+
+[연습 문제 2]
+- 각각의 유닛을 멤버 변수로 가지는 Shuttle 클래스를 만들고 탑승한 유닛의 정보를 출력하라.
+- Shuttle 클래스의 조건: 제네릭 타입을 사용하라.
+
+//Shuttle 클래스
+public class Shuttle <T extends BioUnit> {
+    private T unit;
+
+    public void in (T unit){
+        this.unit = unit;
+    }
+
+    public T out(){
+        return unit;
+    }
+
+    public void showInfo(){
+        System.out.println("이름: " + unit.getName()+", HP: "+ unit.getHp());
+    }
+}
+
+
+
+//ShuttleTest 클래스
+import ex.ex2.Marine;
+import ex.ex2.Zealot;
+import ex.ex2.Zergling;
+
+public class ShuttleTest {
+    public static void main(String[] args) {
+        
+        Shuttle<Marine> shuttle1= new Shuttle<>();
+        shuttle1.in(new Marine("마린",40));
+        shuttle1.showInfo();
+
+        Shuttle<Zergling> shuttle2= new Shuttle<>();
+        shuttle2.in(new Zergling("저글링",35));
+        shuttle2.showInfo();   
+
+        Shuttle<Zealot> shuttle3= new Shuttle<>();
+        shuttle3.in(new Zealot("질럿",100));
+        shuttle3.showInfo();
+    }
+}
+
+실행결과: 
+이름: 마린, HP: 40 
+이름: 저글링, HP: 35 
+이름: 질럿, HP: 100
+
+총평:
+어렵지 않다 그냥 제네릭 메서드를 사용하는 문법 익히기 용.
+
+
+[연습 문제 3]
+- 앞서 문제에서 만든 Shuttle 클래스를 활용하여 UnitPrinter 클래스를 만들고 unitPrinterV1,unitPrinterV2 를 만들어라
+- 조건: unitPrinterV1()은 제네릭 메서드로 구현, unitPrinterV2은 와일드 카드로 만들어야한다.
+
+//UnitPrinter 클래스
+package ex.ex2;
+
+public class UnitPrinter {
+    
+    public static <T extends BioUnit>void printV1 (Shuttle<T> t){
+        T unit = t.out();  //전달 받은 인수값이 Shuttle 클래스 이기 때문에 이름과 hp를 알려면 BioUnit 타입으로 전달 받아야한다.
+        System.out.println("이름: " + unit.getName()+", HP: "+ unit.getHp());
+    }
+
+    public static void printV2 (Shuttle<? extends BioUnit> t){
+        BioUnit unit = t.out(); //상한이 BioUnit타입이기 때문에 전달 받을 때 최상한 클래스로 받아야한다 (와일드카드이기에)
+        System.out.println("이름: " + unit.getName()+", HP: "+ unit.getHp());
+
+    }
+}
+
+
+
+// 실행코드
+import ex.ex2.Marine;
+import ex.ex2.Zealot;
+import ex.ex2.Zergling;
+
+public class ShuttleTest {
+    public static void main(String[] args) {
+        
+        Shuttle<Marine> shuttle1= new Shuttle<>();
+        shuttle1.in(new Marine("마린",40));
+        shuttle1.showInfo();
+
+        UnitPrinter.printV1(shuttle1);
+        UnitPrinter.printV2(shuttle1);
+    }
+}
+
+실행결과:
+이름: 마린, HP: 40 
+이름: 마린, HP: 40
+
+총평:
+마찬가지로 어렵진 않은데 Static에서는 제네릭 메서드만 사용 가능한거랑, 타입인자가 Shuttle 타입인데 BioUnit타입으로 안받고 해버리려고 해떤것
+이런것들 조심해야한다 타입인자가 정확히 무엇으로 받고있는지 그리고 기본적인 문법을 자꾸 틀려서 시간을 자꾸 잡아먹었다
+정확하게 문법을 인지하고 사용법을 인지하고 있으면 될 것같다
+그리고 실무에서는 제네릭클래스를 보통 만들거나 설계하지 않는단다 다 이미 있는 라이브러리를 사용하기에 즉 코드를 읽고 이해할 수 있을 정도만 있어도 된다한다
+더 깊게는 실무에서 일하다가 공부해도 늦지않는다고 한다 제네릭 파트는 여기서 끝! 조금 어려웠다...
