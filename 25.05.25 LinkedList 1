@@ -1,0 +1,125 @@
+LinkedList를 배우기 위해 노드의 개념을 정리했다
+
+노드란?
+자기 자신의 값과 자신 다음의 참조값을 가지고 있는 자료구조를 말한다
+ArrayList랑은 다르게 메모리 내에서 연결적이지 않고 비연결적이다. 그래서 인덱스로 찾기 위해서는 최초 노드부터 쭉 훑으면서 탐색해야하므로
+메모리 낭비가 심하다 특히 자바에서는 자신의 앞 뒤 참조값을 가지고 있는 DoubleLinkedList를 사용 하기에 노드 하나당 참조값 2개는 필수 적으로
+지녀야하므로 실무에서는 잘 활용하지 않는다.
+
+
+LinkedList의 특징
+📌 삽입/삭제 빠름	중간에 삽입/삭제가 많을 때 빠름 (O(1) — 참조만 바꾸면 됨)
+📌 접근 느림	인덱스로 접근할 때는 느림 (O(n) — 앞에서부터 차례로 찾아야 함)
+📌 메모리 사용 많음	노드마다 추가로 포인터 2개 저장해야 하니까 ArrayList보다 메모리 많이 씀
+
+
+ArrayList vs LinkedList
+| 항목             | ArrayList             | LinkedList               |
+| ------------ | --------------------- | ------------------------ |
+| 📦 내부 구조     | 배열(Array)             | 노드(Node)의 연결 구조 (연결 리스트) |
+| 📌 메모리 구조    | 연속된 메모리 블록 사용         | 각각의 노드가 따로 존재 (비연속)      |
+| 🔍 조회 (get)  | 빠름 (O(1))             | 느림 (O(n)) – 순차 탐색 필요     |
+| ➕ 삽입/삭제 (중간) | 느림 (O(n)) – 데이터 밀기 필요 | 빠름 (O(1), 노드 참조만 수정)     |
+| ➕ 삽입/삭제 (끝)  | 보통 빠름 (끝이면 O(1))      | 빠름 (O(1))                |
+| 💾 메모리 사용량   | 적음                    | 많음 (노드마다 포인터 필요)         |
+| 🧵 쓰레드 안전성   | 둘 다 기본적으로는 안전하지 않음    | 동일                       |
+
+예제코드 
+
+public class Node{
+    Object item;
+    Node next;
+
+    Node(Object item){
+        this.item = item;
+    }
+
+ /* 
+    @Override
+    public String toString(){
+        return "Node{" + "item = " + item + ", next = "+ next + "}";
+    }
+
+    출력 결과:Node{item = A, next = Node{item = B, next = Node{item = C, next = null}}}
+    이렇게 나오는 이유는 Node 클래스는 다음 Node 객체를 가지고 있기에 재귀적으로 돌아가버린다.
+*/
+
+    @Override
+    public String toString(){
+        내가 건너 뛴 부분에서 설명을 했다는데 StringBuilder는 변경할 수 있는 String이라 생각하면 된다. 문법은 append 뭐 이렇게 있다.
+        StringBuilder sb = new StringBuilder();
+        Node x = this;
+        sb.append("[");
+        while (x != null){
+            sb.append(x.item);
+            if(x.next != null){
+                sb.append("->");
+            }
+            
+            x = x.next;
+        }
+        sb.append("]");
+        return sb.toString();
+        // 출력결과: [A->B->C]
+    }
+
+
+  마지막 노드를 가지고 오는것 
+        public static  Node getLastNode(Node node){ // 스태틱이므로 this 사용 불가 
+        Node x = node;
+        while(x != null){
+            if(x.next == null){
+             
+                return x;
+            }
+            x = x.next;
+        }
+        return null;
+    }
+
+    public static Node getNode(Node node, int index){
+        Node x = node;
+        for(int i = 0; i<index; i++){
+            x = x.next;
+        }
+
+        return x;
+    }
+
+
+}
+
+
+메인코드
+public class NodeMain {
+    public static void main(String[] args) {
+        Node first = new Node("A");
+        first.next = new Node("B");
+        first.next.next = new Node("C");
+
+
+        //모든 노드 탐색하기
+        System.out.println("모든 노드 탐색하기");
+        Node x = first;
+        while(x != null){
+            System.out.println(x.item);
+            x = x.next;
+        }
+        
+
+        //연결된 노드 탐색하기
+        System.out.println(first);
+      
+
+
+        //마지막 노드 탐색하기
+        Node lastNode = Node.getLastNode(first);
+        System.out.println("lastNode = "+lastNode);
+
+        //특정 인덱스의 노드 조회하기
+        int index = 2;
+        Node indexNode = Node.getNode(first, index);
+        System.out.println("indexNode = "+ indexNode); 
+        
+    }
+}
