@@ -1,0 +1,115 @@
+직접 LinkedList를 만들어보자 
+
+
+LinkedList나 ArrayList나 똑같은 리스트이다 중복을 허용하고 순서가 있다는 점에서는 똑같지만
+내부구조는 명백히 다르다 
+
+
+
+public class MyLinkedListV1 {
+    private Node first;
+    private int size = 0;
+
+    public void add(Object a){      first노드가 값이 비어져있다면 파라미터가 바로 first가 되고 값이 있다면 마지막노드를 불러와서 추가한다.
+        Node newNode = new Node(a);
+        if(first == null){
+            first = newNode;
+        } else {
+            Node lastNode = getLastNode();
+            lastNode.next = newNode;
+        }
+        size++;
+        
+    }
+
+    private Node getLastNode(){   다음 노드가 없다면 그것이 마지막 노드라는 뜻이므로 마지막 노드를 반환
+        Node x = first;
+        while(x.next != null){
+            x = x.next;
+        }
+        return x;
+    }
+
+
+    public Object set(int index, Object element) {
+        Node x = getNode(index);
+        Object oldValue = x.item;
+        x.item = element;
+        return oldValue;
+    }
+
+    public Object get(int index) {
+        Node node = getNode(index);
+        return node.item;
+    }
+
+    private Node getNode(int index) {
+        Node x = first;
+        for (int i = 0; i < index; i++) {
+            x = x.next;
+        }
+        return x;
+    }
+    
+    public int indexOf(Object o) {
+        int index = 0;
+        for (Node x = first; x != null; x = x.next) {
+            if (o.equals(x.item))
+                return index;
+                index++;
+        }
+        return -1;
+    }
+    public int size() {
+        return size;
+    }
+
+    //코드 추가 
+    //특정위치에 데이터를 추가하는 add, 제거하는 remove를 만들어보자
+
+
+    이 코드는 내가 직접 만든거라 보기가 조금 나쁘고 이해하기가 어려운데
+    1. 2번 노드를 바꾼다면 1번의 next를 새로운 노드의 next로 참조를 바꾼다
+    2. 1번 노드의 next 참조값을 새로운 노드로 바꾼다.
+    3. 이미 새로운 노드의 값이 있으므로 값을 추가로 넣을 필요는 없다.
+    4. 새로운 노드가 추가 되었으므로 사이즈를 1 증가시킨다
+    이렇게 돌아간다
+    public void add(int index, Object a){
+        Node newNode = new Node(a);
+        Node oldNode = first;
+
+        for(int i = 0; i<index-1; i++){
+            oldNode = oldNode.next;
+        }
+        newNode.next = oldNode.next;
+        oldNode.next = newNode;
+        size ++;
+    }
+
+
+    이것도 내가 직접 만든거다
+    1. 2번 노드를 바꾼다면 1번 노드의 참조값을 3번 노드의 참조값으로 바꾼다
+    2. 2번 노드를 없앤다
+    3. 사이즈를 1 감소시킨다
+    public Object remove(int index){
+        Node oldNode = first;
+        Object oldValue = null;
+        for(int i = 0; i<index-1; i++){
+            oldNode = oldNode.next;
+        }
+        oldValue = oldNode.next.item;
+        oldNode.next = oldNode.next.next;  
+        size--;
+        return oldValue;
+        
+    }
+
+    @Override
+    public String toString() {
+        return "MyLinkedListV1{" +
+                "first=" + first +
+                ", size=" + size +
+                '}';
+    }
+}
+
