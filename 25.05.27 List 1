@@ -1,0 +1,80 @@
+지금까지는 구체적인 클래스에 의존을 해왔지만 어레이리스트와 링크드리스트를 둘 다 사용하고 싶을 때는 추상화를 시키면 된다
+(말이 좀 이상하긴 한데 암튼 인터페이스를 사용해서 다형성을 구현한다 라고 생각하면 된다)
+
+
+//인터페이스 MyList, 제네릭을 사용해서 타입안정성을 높힌다.
+public interface MyList<E> {
+
+    int size();
+
+    void add(E e);
+
+    void add(int index, E e);
+
+    E get(int index);
+
+    E set(int index, E element);
+
+    E remove (int index);
+
+    int indexOf(E o);
+}
+
+
+MyList를 활용한 에제코드
+
+
+public class BatchProcessor {
+    //만약 큰 데이터를 다루는 클래스를 내가 개발했다 근데 Array리스트로 개발을 했는데 맨 앞에 추가 할 데이터가
+    //너무 많아서 LinkedList로 바꾸고 싶다
+
+    //private final MyArrayList list = new MyArrayList(); 
+    
+    //private final MyLinkedList list = new MyLinkedList();
+
+    // 위와 같이 하나의 클래스를 사용하는 경우를 우리는 구체적인 클래스에 의존하고 있다 라고 표현한다
+    // 만약 이 BatchProcessor의 리스트의 종류를 바꾸고 싶을 때 코드를 다 뒤집어야한다
+    // 하지만 이를 추상적 인터페이스인 MyList를 사용한다면 코드를 바꾸지 않고 런타임에서 리스트의 종류를 결정 할 수 있다.
+
+
+    private final MyList<Integer> list;
+
+    public BatchProcessor(MyList<Integer> list){
+        this.list = list;
+    }
+
+    public void logic(int size) {
+        long startTime = System.currentTimeMillis();
+        for (int i = 0; i < size; i++) {
+            list.add(0, i); //앞에 추가
+        }
+        long endTime = System.currentTimeMillis();
+        System.out.println("크기: " + size + ", 계산 시간: " + (endTime -
+startTime) + "ms");
+    }
+
+
+    //main() {
+    //    new BatchProcessor(new MyArrayList()); //MyArrayList를 사용하고 싶을 때
+    //    new BatchProcessor(new MyLinkedList()); //MyLinkedList를 사용하고 싶을 때
+    //}
+
+    // 위와 같이 메인코드에서 런타임일 때 리스트의 종류를 바꿀 수 있다.
+
+} 
+
+
+public class BatchProcessorMain {
+    public static void main(String[] args) {
+        MyArrayList<Integer> list = new MyArrayList<>();
+        //MyLinkedList<Integer> list = new MyLinkedList<>();
+        //연결 리스트로 바꾸고 싶으면 생성자로 타입을 정해 생성하고 Batch객체에 넣는다.
+
+        BatchProcessor processor = new BatchProcessor(list);
+        processor.logic(50000);
+
+    }
+}
+
+
+시간이 없어서 여기까지만 적고 내일 해야곘다.
