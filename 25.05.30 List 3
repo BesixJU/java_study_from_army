@@ -1,0 +1,70 @@
+오늘은 문제를 풀어보는 시간을 가졌다
+
+문제가 총 4개였는데 1,2,3 은 너무 쉬워서 따로 적지 않겠다
+
+[문제]
+문제 - 리스트를 사용한 쇼핑 카트
+Cart 클래스를 완성해라.
+Cart 는 내부에 리스트를 사용해야 한다
+Cart는 Item클래스를 멤버 변수로 가지고 있다.
+
+[Item Class]
+public class Item {
+    private String name;
+    private int price;
+    private int quantity;
+
+    public Item(String name, int price, int quantity) {
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+    }
+
+    public String getName() {
+        return name;
+    }
+    
+    public int getTotalPrice() {
+        return price * quantity;
+    }
+}
+
+
+
+
+
+
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Cart  {
+    private List<Item> items = new ArrayList<>(); 이런식으로 멤버 변수에 생성자를 사용 할 수도 있더라구 
+
+    public void addItem(Item item) {
+    items.add(item);
+    }
+    
+    public void displayItems() {
+        System.out.println("장바구니 상품 출력");
+        for (Item item : items) {
+            System.out.println("상품명:" + item.getName() + ", 합계:" +
+            item.getTotalPrice());
+        }
+        System.out.println("전체 가격 합:" + calculateTotalPrice());
+    }
+
+    private int calculateTotalPrice() {
+    int totalPrice = 0;
+
+    for (Item item : items) {
+        totalPrice += item.getTotalPrice();
+    }
+    
+    return totalPrice;
+    }
+}
+
+확실히 영한이형은 문제를 잘만드는 느낌은 아니다 뭐 문법적으로 늘어난게 아니고 콜렉션프레임워크 배우고 있는거긴한데
+그래도 문제가 너무 쉽다 어려운 부분도 아니고 안해본 부분이라서 어렵다고도 안한것같다 바로 구글에 어레이리스트에 객체 넣는법 검색하니 바로 나왔다
