@@ -1,0 +1,249 @@
+지금까지는 정수로만 해시인덱스를 구했다 그렇다면 문자열은?
+
+public class StringHashMain {
+    static final int DEFAULT_CAPACITY = 16;
+    public static void main(String[] args) {
+        char charA = 'A';
+        char charB = 'B';
+        System.out.println("charA = " + (int)charA);
+        System.out.println("charB = " + (int)charB);
+        //char 타입은 아스키코드로 변환 할 수있기에 별 문제가 되지 않는다
+        //하지만 String타입은?
+        //바로 해시코드를 구해서 정수 타입으로 변환후 사용한다.
+    
+        
+        int hashCodeA = hashCode("A");
+        int hashIndex = hashIndex(hashCodeA);
+
+        
+    }
+
+    //String -> 정수로 변환하는 메서드
+    //String을 char타입의 배열로 바꾼 후 각 자리의 아스키코드값을 더하여 해시코드를 구하는 메서드다
+    //이 메서드만 있다면 앞에서 한 정수형처럼 해시인덱스를 구해서 저장할 수 있다.
+    static int hashCode(String str){
+        char[] charArray = str.toCharArray();
+        int sum = 0;
+        for (char c : charArray) {
+            sum += (int )c;
+        }
+        return sum;
+    }
+
+    //정수를 해쉬인덱스로 만드는 메서드
+    static int hashIndex(int num){
+        return num %10;
+    }
+}
+
+
+
+
+=======================================================================================================
+문자열 타입을 정수로 변환시키는 "hashCode" 만든 후 해시인덱스를 구한다
+그렇다면 내가 만든 객체들은?
+=======================================================================================================
+
+
+ 우리는 자바의 기본타입 말고도 Member나 Cart같은 내가 만든 객체들이 있다 그러면 어떻게 내가 만든 객체에서
+ 해시코드를 구하고 해시 인덱스를 구할까?
+ 바로 자바에서 모든 클래스에 제공하는 hashCode()메서드를 이용하면 된다.
+
+ hashCode() 메서드는 보통 오버라이딩해서 사용한다
+ 왜냐하면 이 메서드의 기본 구현은 객체의 참조값을 기반으로 해시코드를 생성한다.
+ 즉 인스턴스가 다르면 해시코드도 다르다
+
+ Members 객체에서 id가 같으면 같은 객체라고 하고싶은데 인스턴스가 다르므로
+ id가 같던 어쩌던 객체의 참조값(메모리 주소)가 다르니 hashCode()메서드로 해시코드를 구하면
+ 다른 해시코드가 나오며, 당연히 hashIndex에서는 다른 객체라고 판단한다
+ 이러면 HashSet에 같은 객체가 2번 들어가게 된다.
+
+ 내가 원하는 값이 같다면 이 객체들은 같다 라고 하려면 equals()와 hashCode() 메서드를 오버라이딩 해야한다.
+ 아래 코드에서는 hashCode와 equals를  참조값이 아닌 id를 기준으로 생성한다.
+======================================================================================================
+
+
+
+public class Members {
+    private String id;
+
+    Members(String id){
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Members member = (Members) o;
+        return Objects.equals(id, member.id);
+    }
+
+    @Override
+    public int hashCode(){ // 이런식으로 해시코드를 구한다.
+        return Objects.hash(id);
+    }
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id='" + id + '\'' +
+                '}';
+    }
+}
+======================================================================================================
+
+ [hashCode()와 hashIndex() 오버라이딩의 중요성]
+ Object의 기본 기능
+ hashCode() : 객체의 참조값을 기반으로 해시 코드를 반환한다.
+ equals() : == 동일성 비교를 한다. 따라서 객체의 참조값이 같아야 true 를 반환한다
+ 
+ [만약 equls는 오버라이딩하고 hashCode()를 오버라이딩 하지않는다면?  ]
+ hashCode는 기본적으로 해당 인스턴스의 참조값으로 해시코드를 만든다.
+ id가 같으면 같은 객체라고 판단하고 싶다라고 하고싶다면 id를 기준으로
+ 해시코드를 만들도록 오버라이딩 하지 않는다면 각각의 객체가 해시인덱스가 다르므로
+ 하나의 Set에 중복된 객체가 들어가게 된다.
+ 또한 데이터 검색 시 또 새로운 인스턴스를 만들어서 이 인스턴스가 존재하는지 알아보고 싶은데
+ 새로운 인스턴스는 또 참조값이 다르므로 다른 해시인덱스를 다른 곳을 검색하고 그곳은 당연히 비어있으니
+ 검색에 실패한다.
+
+ [만약 hashCode()는 오버라이딩하고 equals()를 오버라이딩 하지 않는다면]
+ equals() 또한 기본적으로 해당 인스턴스의 참조값으로 비교를 한다.
+ 당연히 id만 같고 인스턴스가 다르므로 다른 객체라고 판단하고 
+ 같은 해시인덱스 안에 같은 객체를 중복 저장하게 된다.
+ 또한 검색시에도 인스턴스의 참조값이 다르므로 id가 같다 해도 다른 객체라고 판단해서
+ 검색시 실패하게된다.
+
+ 여기서 동일성과 동등성이 나오는데 
+동일성(Identity): == 연산자를 사용해서 두 객체의 "참조"가 동일한 객체를 가리키고 있는지 확인
+동등성(Equality): equals() 메서드를 사용하여 두 객체가 논리적으로 동등한지 확인
+(member1 == member2) = false        
+member1 equals member2 = true
+
+member1.hashCode() = 104101
+member2.hashCode() = 104101
+
+[정리]
+
+모든 기본타입은 자바에서 hashCode()메서드를 사용해서 해시코드를 구할 수 있게 재정의 해두었다.
+
+하지만 객체를 만들어야하는 경우 참조값을 바탕으로 해시코드를 구하므로 나의 논리과 자바의 생각이 다른 경우도 존재한다
+이럴 때 hashCode()를 재정의하면 모든 종류의 객체를 해시 자료구조에 보관할 수 있다.
+
+
+ */
+================================================================================================================
+ 아래는 모든 객체를 Set에 저장하는 코드이다
+ package HashSet;
+import java.util.Arrays;
+import java.util.LinkedList;
+
+//이거 제네릭으로도 할 수 있는데 할 수 있어서 안했다!! ㅎㅎ 귀차낭
+public class MyHashSetV2 {
+    final static int DEFAULT_CAPACITY = 10;
+
+    private LinkedList<Object>[] buckets = new LinkedList[DEFAULT_CAPACITY];
+    private int size = 0;
+    private int capacity = DEFAULT_CAPACITY;
+
+    public MyHashSetV2(){
+        for(int i = 0; i<capacity; i++){
+            buckets[i] = new LinkedList<>();
+        }
+        size++;
+    }
+
+    public MyHashSetV2(int capacity){
+        this.capacity = capacity;
+        for(int i = 0; i<capacity; i++){
+            buckets[i] = new LinkedList<>();
+        }
+        size++;
+    }
+
+    public boolean add(Object value){
+        LinkedList<Object> bucket = buckets[hashIndex(value)];
+        if(!bucket.contains(value) ){
+            bucket.add(value);
+            size++;
+            return true;
+        }else{
+            return false;
+        }
+        
+    }
+
+    public boolean remove(Object value){
+        LinkedList<Object> bucket = buckets[hashIndex(value)];
+        if(bucket.contains(value) ){
+            bucket.remove(value);
+            size--;
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean contains(Object searchValue){
+        LinkedList<Object> bucket = buckets[hashIndex(searchValue)];
+        if(bucket.contains(searchValue)){
+            return true;
+        }
+        return false;
+
+    }
+    public int hashIndex(Object value){
+        //음수가 나올수도 있으므로 abs를 사용하여 양수로 만든다.
+        return Math.abs(value.hashCode())%10;
+    }
+
+    @Override
+    public String toString() {
+    return "MyHashSetV2{" +
+        "buckets=" + Arrays.toString(buckets) +
+        ", size=" + size +
+        ", capacity=" + capacity +
+    '}';
+    }
+
+    
+}   
+
+
+[Main]
+
+public class MyHashSetV2Main {
+    public static void main(String[] args) {
+        MyHashSetV2 set = new MyHashSetV2(10);
+        set.add("A");
+        set.add("B");
+        set.add("C");
+        set.add("D");
+        set.add("AB");
+        set.add("SET");
+        System.out.println(set);
+        System.out.println("A.hashCode=" + "A".hashCode());
+        System.out.println("B.hashCode=" + "B".hashCode());
+        System.out.println("AB.hashCode=" + "AB".hashCode());
+        System.out.println("SET.hashCode=" + "SET".hashCode());
+        //검색
+        String searchValue = "SET";
+        boolean result = set.contains(searchValue);
+        System.out.println("set.contains(" + searchValue + ") = " + result);
+    }
+}
+
+[실행결과]
+MyHashSetV2{buckets=[[], [AB], [], [], [], [A], [B, SET], [C], [D], []], size=7, capacity=10}
+A.hashCode=65
+B.hashCode=66
+AB.hashCode=2081
+SET.hashCode=81986
+set.contains(SET) = true
