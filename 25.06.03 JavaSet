@@ -1,0 +1,47 @@
+package JavaSet;
+
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+
+public class JavaSetMain {
+    public static void main(String[] args) {
+
+        /*
+        자바가 구현하는 Set에는 크게 3가지 종류가 있다
+        1. HashSet - HashCode, HashIndex를 사용하여 중복, 순서 없이 저장한다.
+        2. LinkedHashSet - 다른건 다 같지만 입력한 순서를 보장한다. (노드를 사용하여 앞 뒤 노드를 알 수 있다)
+        3. TreeSet - HashSet과는 다르게 이진탐색트리 구조로 이루어져 있다 이진탐색트리는 추가와 삭제에는 시간이 조금 더걸리지만
+                     정렬과 검색에 높은 성능을 보이는 구조이다, 또한 데이터의 값을 기준으로 정렬된다. (1,3,2가 입력되면 1,2,3으로 정렬되어 저장된다)
+                     
+         
+         */
+        
+        Set<String> hashSet = new HashSet<>();
+        Set<String> linkedHashSet = new LinkedHashSet<>();
+        Set<String> treeSet = new TreeSet<>();
+
+        run(hashSet);
+        run(linkedHashSet);
+        run(treeSet);   
+
+    }
+    private static void run(Set<String> set){
+        System.out.println("Set = " + set.getClass());
+
+        set.add("C");
+        set.add("B");
+        set.add("A");
+        set.add("1");
+        set.add("2");
+
+        Iterator<String> iterator = set.iterator();
+        while(iterator.hasNext()){
+            System.out.print(iterator.next()+ " ");
+        }
+        System.out.println();
+    }
+
+}
