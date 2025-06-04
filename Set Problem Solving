@@ -1,0 +1,95 @@
+package Test;
+
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+public class Test1 {
+    public static void main(String[] args) {
+        Integer[] inputArr = {30,20,20,10,10};
+        //중복을 제거하여 출력하라
+        Set<Integer> set = new HashSet<>();
+
+        for (Integer integer : inputArr) {
+            set.add(integer);
+        }
+
+        System.out.println(set);
+        //중복을 제거하되, 입력 순서대로 출력하라
+        set = new LinkedHashSet<>();
+
+        for (Integer integer : inputArr) {
+            set.add(integer);
+        }
+
+        System.out.println(set);
+
+        //중복을 제거하되, 데이터의 값 순서대로 출력하라.
+        set = new TreeSet<>(); 
+
+        for (Integer integer : inputArr) {
+            set.add(integer);
+        }
+
+        System.out.println(set);
+    }
+    
+}
+
+package Test;
+
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.List;
+public class Test2 {
+    public static void main(String[] args) {
+        
+        Set<Integer> set1 = new HashSet<>(List.of(1,2,3,4,5));
+        Set<Integer> set2 = new HashSet<>(List.of(3,4,5,6,7));
+    
+        //Set1, Set2의 합집합
+        
+        Set<Integer> unionSet = new HashSet<>();
+        for (Integer integer : set1) {
+            unionSet.add(integer);
+        }
+        for (Integer integer : set2) {
+            unionSet.add(integer);
+        }
+
+        System.out.println("합집합: "+ unionSet);
+
+        //Set<Integer> unionSet = new HashSet<>(set1);
+        //unionSet.addAll(set2) 하면 바로 되네 ㅎㅎ;;
+
+
+        //Set1, Set2의 교집합
+        Set<Integer> intersectSet = new HashSet<>();
+        for (Integer integer : set1) {
+            if(set2.contains(integer)){
+                intersectSet.add(integer);
+            }
+        }
+        System.out.println("교집합: " + intersectSet);
+        // Set<Integer> intersectSet = new HashSet<>(set1);
+        //intersectSet.retainAll(set2); 하면 교집합을 만들어준다.
+    
+
+        //Set1, Set2의 차집합
+        Set<Integer> exceptSet = new HashSet<>();
+        for (Integer integer : set1) {
+            if(!set2.contains(integer)){
+                exceptSet.add(integer);
+            }
+        }
+        System.out.println("차집합: "+exceptSet);
+        //Set<Integer> exceptSet = new HashSet<>(set1);
+        //exceptSet.removeAll(set2); 하면 차집합 만들어준다.
+
+    }   
+}
+[정리]
+합집합, 교집합, 차집합 만들때 각각 addAll, retainAll, removeAll 을 사용해서 만들 수 있다
+Set을 생성할 때 생성자 파라미터 안에 Set 을 넣을 수가 있다
+사실 문제가 3개인데 나는 퍼킹 인텔리제이를 안써서 풀 수가 없다 ㅎㅎ;;
