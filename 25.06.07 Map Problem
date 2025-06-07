@@ -1,0 +1,304 @@
+별로 어렵진 않은데 Map에서 객체를 key 나 value로 가질때 약간 머리가 꼬이긴 하네 개념은 별로 어려운게 없다 좀 추상적이긴한데
+어차피 파이썬에서 했던 dict 타입이랑 똑같은거라 그렇게 어렵진 않네 
+=========================================================================================================================
+[기본문제들]
+public class Test1 {
+    public static void main(String[] args) {
+    //문제 1 - 배열 -> 맵
+    String[][] productArr = {{"Java", "10000"}, {"Spring", "20000"},
+    {"JPA", "30000"}};
+
+
+    // 주어진 배열로부터 Map 생성 - 코드 작성
+    Map<String, Integer> map = new HashMap<>();
+    for (String[] strings : productArr) {
+        map.put(strings[0],Integer.valueOf(strings[1]));
+    }
+
+    // Map의 모든 데이터 출력 - 코드 작성
+    System.out.println(map);
+
+
+
+    //문제 2: map1 과 map2의 공통으로 들어있는 키를 찾고 합을 구한다.
+    Map<String, Integer> map1 = new HashMap<>();
+    map1.put("A", 1);
+    map1.put("B", 2);
+    map1.put("C", 3);
+
+    Map<String, Integer> map2 = new HashMap<>();
+    map2.put("B", 4);
+    map2.put("C", 5);
+    map2.put("D", 6);
+
+    Map<String, Integer> result = new HashMap<>();
+    
+    for (String strings : map1.keySet()) {
+        if(map2.containsKey(strings)){
+            result.put(strings, map1.get(strings)+ map2.get(strings));
+        }
+    }
+    System.out.println(result);
+
+    //문제 3 각각의 단어가 나타난 수를 출력해라.
+    String text = "orange banana apple apple banana apple";
+    String words[] = text.split(" ");
+    map.clear();
+    
+    for (String key : words) {
+        if(!map.containsKey(key)){
+            map.put(key, 1);
+        }else{
+            map.put(key, map.get(key)+1);
+        }
+    }
+    System.out.println(map);
+
+    //문제 4 - Map에 들어가있는 데이터 값중에 1000원인 모든 상품을 출력하라
+    map.clear();
+    map = Map.of("사과", 500, "바나나", 500, "망고", 1000, "딸기", 1000);
+
+    List<String> list = new ArrayList<>();
+    for (String key : map.keySet()) {
+        if(map.get(key)==1000){
+            list.add(key);
+        }
+    }
+    System.out.println(list);
+
+ }
+}
+=========================================================================================================================
+영어를 검색하면 한글 뜻을 알려주는 사전을 만들어보자
+
+public class Test2 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String key;
+        String value;
+        Map<String, String> dictionary = new HashMap<>(); 
+
+        System.out.println("==단어 입력 단계 ==");
+        System.out.print("영어 단어를 입력하세요 (종료는 'q'): ");
+        key = scanner.nextLine();
+        while (!key.equals("q")) {
+            System.out.print("한글 뜻을 입력하세요: ");
+            value = scanner.nextLine();
+            dictionary.put(key, value);
+            System.out.print("영어 단어를 입력하세요 (종료는 'q'): ");
+            key = scanner.nextLine();        
+        }
+
+        System.out.println("==단어 검색 단계 ==");
+        System.out.print("찾을 영어 단어를 입력하세요 (종료는 'q'): ");
+        key = scanner.nextLine();
+        while (!key.equals("q")) {
+            if(dictionary.containsKey(key)){
+                System.out.println(key + "의 뜻: "+ dictionary.get(key));
+            }else{
+                System.out.println(key + "은(는)은 사전에 없는 단어입니다.");
+            }
+            System.out.print("찾을 영어 단어를 입력하세요 (종료는 'q'): ");
+            key = scanner.nextLine();
+        }        
+        
+    }
+}
+=========================================================================================================================
+문제 2 - 회원의 아이디를 Map을 활용하여 관리하자
+대신 회원의 id가 key고 Member가 value이다
+
+{Member Class}
+
+public class Member {
+    private String id;
+    private String name;
+
+    public Member(String id, String name) {
+    this.id = id;
+    this.name = name;
+    }
+
+    public String getId() {
+    return id;
+    }
+
+    public String getName() {
+    return name;
+    }
+    
+    @Override
+    public String toString() {
+    return "Member{" +
+    "id='" + id + '\'' +
+    ", name='" + name + '\'' +
+    '}';
+    }
+}
+
+{MemberRepository Class}
+
+public class MemberRepository {
+    private Map<String, Member> memberMap = new HashMap<>();
+
+    public void save(Member member) {
+        memberMap.put(member.getId(), member);
+    }
+    public void remove(String id) {
+        memberMap.remove(id);
+    }
+    public Member findById(String id) {
+        return memberMap.get(id);
+    }
+    public Member findByName(String name) {
+        for (Member member : memberMap.values()) {
+            if(member.getName().equals(name)){
+                return member;
+            }
+        }
+        return null;
+        
+    }
+}
+
+{MemberRepositoryMain}
+
+public class MemberRepositoryMain {
+    public static void main(String[] args) {
+        
+    
+    Member member1 = new Member("id1", "회원1");
+    Member member2 = new Member("id2", "회원2");
+    Member member3 = new Member("id3", "회원3");
+
+    // 회원 저장
+    MemberRepository repository = new MemberRepository();
+
+    repository.save(member1);
+    repository.save(member2);
+    repository.save(member3);
+
+    // 회원 조회
+    Member findMember1 = repository.findById("id1");
+    System.out.println("findMember1 = " + findMember1);
+    Member findMember3 = repository.findByName("회원3");
+    System.out.println("findMember3 = " + findMember3);
+
+    // 회원 삭제
+    repository.remove("id1");
+    Member removedMember1 = repository.findById("id1");
+    System.out.println("removedMember1 = " + removedMember1);
+ }
+
+}
+
+[출력결과]
+findMember1 = Member{id='id1', name='회원1'}
+findMember3 = Member{id='id3', name='회원3'}
+removedMember1 = null
+
+=========================================================================================================================
+문제 3 - 장바구니 
+상품이름과 가격을 가지는 Product 클래스, 그리고 상품을 담아두고 수량을 담아 놓는 Cart 클래스를 만들자
+Cart 클래스는 product를 키로, 수량을 값으로 가지는  Map이다 
+상품의 이름과 가격이 같으면 같은 상품으로 취급한다
+
+public class Product {
+    private String name;
+    private int price;
+    
+    public Product(String name, int price){
+        this.name = name;
+        this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+
+!!상품 이름과 가격을 기준으로 같은 객체인지 판단하기에 hashCode()와 equals를 오버라이딩 해줘야한다!!
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return price == product.price && Objects.equals(name, product.name);
+    }
+
+
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, price);
+    }
+    
+    @Override
+    public String toString() {
+    return "Product{" +
+    "name='" + name + '\'' +
+    ", price=" + price +
+    '}';
+    }
+
+
+}
+
+
+public class Cart {
+    private Map<Product, Integer> cartMap = new HashMap<>();
+
+    public void add(Product product, Integer capacity){
+        if(!cartMap.containsKey(product)){
+            cartMap.put(product, 1);
+        }else{
+            cartMap.put(product, cartMap.get(product)+capacity) 이렇게 하는게 제일 편한듯 현재 value를 불러오고 거기서 수량을 추가해서 put을 다시하는거(어차피 중복 안되니깐)
+        }
+    }
+
+    public void minus(Product product, Integer capacity){
+        if(cartMap.get(product) - capacity<=0){ 0 이하이면 상품 자체를 없애란다 ㅠㅠ
+            cartMap.remove(product);
+        }else{
+            cartMap.put(product, cartMap.get(product)-capacity);
+        }
+    }
+
+    public void printAll() {
+    System.out.println("==모든 상품 출력==");
+        for (Map.Entry<Product, Integer> entry : cartMap.entrySet()) {
+            System.out.println("상품: " + entry.getKey() + " 수량: " +
+            entry.getValue());
+        }
+    }
+}
+
+public class CartMain {
+    public static void main(String[] args) {
+    Cart cart = new Cart();
+    cart.add(new Product("사과", 1000), 1);
+    cart.add(new Product("바나나", 500), 1);
+    cart.printAll();
+    cart.add(new Product("사과", 1000), 2);
+    cart.printAll();
+    cart.minus(new Product("사과", 1000), 3);
+    cart.printAll();
+    }
+}
+
+
+[출력결과]
+
+==모든 상품 출력==
+상품: Test.Product@2e83fd9 수량: 1
+상품: Test.Product@582b2e21 수량: 1
+==모든 상품 출력==
+상품: Test.Product@2e83fd9 수량: 3
+상품: Test.Product@582b2e21 수량: 1
+==모든 상품 출력==
+상품: Test.Product@2e83fd9 수량: 0
+상품: Test.Product@582b2e21 수량: 1
