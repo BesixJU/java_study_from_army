@@ -1,0 +1,102 @@
+
+import java.util.Iterator;
+
+
+/*
+[순회]
+
+우리는 지금까지 많은 자료구조를 접했다. list, Set, Array, LinkedList 등등
+근데 생각해보면 이상한 점이 있다. 이 자료구조들은 다들 순회하는 방법이 다르다 
+예를들어 Array는 다음 index를 size까지 증가하면서 순회해야하고, 연결리스트는 node.next를 사용해서
+노드의 next가 null일 때 까지 순회해야한다 
+
+이처럼 각 자료구조의 순회 방법이 다 다르다
+그런데 이렇게 각 자료구조마다 순회하는 방법을 다 알아야하나? 이는 너무 복잡하다.
+개발자는 단지 순서대로 입력하고 순서대로 조회하고 정렬하고 싶을 뿐이다.
+
+우리는 동일한 순회 방법을 위해 자바에서 제공하는 iterable 과 iterator 인터페이스를 알아보자. 
+
+
+iterable : 반복가능한
+iterator : 반복자
+
+iterable은 단순히 iterator 즉 반복자를 반환한다.
+반복자를 반환한다는건 반복가능하다는것 즉 순회가 되는 자료구조라는 걸 보증한다는것이다.
+
+iterator의 주요 메서드는 hasNext(), next()가 있다
+hasNext(): 다음 요소가 있는지 확인하고 다음요소가 없다면 false를 반환한다.
+next(): 다음요소를 반환하고, 내부에 있는 위치를 다음으로 이동한다.
+
+데이터 순회 방법은 단순하다. 자료구조마다 다음 요소가 있는지 물어보고 있다면 
+다음요소를 꺼내는 과정을 반복하면 된다, 없다면 당연히 종료하면 된다.
+
+
+
+*/
+public class MyArrayIterator implements Iterator<Integer>  {
+
+    private int currentIndex = -1;
+    private int[] targetArr;
+
+    public MyArrayIterator(int [] targetArr){
+        this.targetArr = targetArr;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return currentIndex < targetArr.length-1;
+    }
+    //size가 5이고 현재 인덱스가 5라면 위의 조건문은 거짓이 되므로 다음요소는 없다 즉 false가 반환된다.
+
+    @Override
+    public Integer next() { 
+        return targetArr[++currentIndex];
+    }
+
+}
+
+
+import java.util.Iterator;
+
+public class MyArray implements Iterable<Integer> {
+
+    private int [] numbers;
+
+    public MyArray(int[] numbers){
+        this.numbers = numbers;
+    }
+    @Override
+    public Iterator<Integer> iterator(){
+        return new MyArrayIterator(numbers);
+    }
+}
+
+
+
+public class MyArrayMain {
+    public static void main(String[] args) {
+        MyArray myArray = new MyArray(new int[]{1,2,3,4,5});
+        Iterator<Integer> iterator = myArray.iterator();
+
+
+        while(iterator.hasNext()){
+            Integer value = iterator.next();
+            System.out.println(value);
+        }
+
+        System.out.println("for-each 사용");
+
+
+        //for-each문은 자료구조를 순회하는 것이 목적이다
+        //자바는 iterable을 지원하는 자료구조에서는 for-each문을 지원한다.
+        //한마디로 위의 코드의 축약 버전이다.
+        for (int value : myArray) {
+            System.out.println("value= " + value);
+        }
+    }
+}
+/*
+MyArray는 Iterable인터페이스를 구현한다 따라서 MyArray는 반복할 수있따는 의미가 된다.
+ 
+  
+ */
